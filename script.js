@@ -11,7 +11,7 @@ const completeBtn = document.getElementById("complete-button");
 
 let countDownTitle = "";
 let countDownDate = "";
-let countDownValue = Date;
+let countDownValue = new Date();
 let countdownActive;
 let saveCountDown;
 
@@ -92,6 +92,7 @@ function reset() {
   clearInterval(countdownActive);
   countDownTitle = "";
   countDownDate = "";
+  localStorage.removeItem('countdown');
 }
 
 function restorePreviousCountdown() {
