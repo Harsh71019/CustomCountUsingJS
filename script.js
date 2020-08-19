@@ -13,6 +13,7 @@ let countDownTitle = "";
 let countDownDate = "";
 let countDownValue = Date;
 let countdownActive;
+let saveCountDown;
 
 const second = 1000;
 const minute = second * 60;
@@ -22,7 +23,6 @@ const day = hour * 24;
 //Set Date Input Min with Todays Date
 
 const today = new Date().toISOString().split("T")[0];
-console.log(today);
 
 dateEl.setAttribute("min", today);
 
@@ -32,13 +32,11 @@ function updateDOM() {
   countdownActive = setInterval(() => {
     const now = new Date().getTime();
     const distance = countDownValue - now;
-    console.log("distance", distance);
 
     const days = Math.floor(distance / day);
     const hours = Math.floor((distance % day) / hour);
     const minutes = Math.floor((distance % hour) / minute);
     const seconds = Math.floor((distance % minute) / second);
-    console.log(days, hours, minutes, seconds);
 
     //Hide the input Container
     inputContainer.hidden = true;
@@ -69,14 +67,17 @@ function updateCountDown(e) {
   e.preventDefault();
   countDownTitle = e.srcElement[0].value;
   countDownDate = e.srcElement[1].value;
-  console.log(countDownDate, countDownTitle);
   //Get number version of current Date and Update Dom
-
+  saveCountDown = {
+    title: countDownTitle,
+    date: countDownDate,
+  };
+  console.log(saveCountDown);
+  localStorage.setItem("countdown", JSON.stringify(saveCountDown));
   if (countDownDate === "") {
     alert("Please Enter a Date");
   } else {
     countDownValue = new Date(countDownDate).getTime();
-    console.log(countDownValue);
     updateDOM();
   }
 }
@@ -93,8 +94,25 @@ function reset() {
   countDownDate = "";
 }
 
+function restorePreviousCountdown() {
+  if (localStorage.getItem("countdown")) {
+    inputContainer.hidden = true;
+    saveCountDown = JSON.parse(localStorage.getItem("countdown"));
+    countDownTitle = saveCountDown.title;
+    countDownDate = saveCountDown.date;
+    countDownValue = new Date(countDownDate).getTime();
+    updateDOM()
+  }
+}
+
 // Event Listeners
 
 countDownForm.addEventListener("submit", updateCountDown);
 countdownBtn.addEventListener("click", reset);
 completeBtn.addEventListener("click", reset);
+
+
+// on Load check local Storage
+
+
+restorePreviousCountdown();
